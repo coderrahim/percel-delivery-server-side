@@ -26,9 +26,47 @@ async function run() {
     const userCollection = client.db("PercelDelivery").collection("users")
     const bookingCollection = client.db("PercelDelivery").collection("booking")
 
+    // All  User
+    app.get('/users', async(req, res) => {
+        const user = await userCollection.find().toArray()
+        res.send(user)
+    })
+
+    app.get('/user', async(req, res) => {
+        let query = {}
+        if(req.query?.email){
+            query = {email: req.query.email}
+        }
+        const result = await userCollection.find(query).toArray()
+        res.send(result)
+    })
+
     app.post('/users', async(req, res) => {
         const user = req.body
         const result = await userCollection.insertOne(user)
+        res.send(result)
+    })
+
+    app.patch('/users/admin/:id', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id : new ObjectId(id)}
+        const updateUser = {
+            $set: {
+                role: 'admin'
+            }
+        }
+        const result = await userCollection.updateOne(filter, updateUser)
+        res.send(result)
+    })
+    app.patch('/users/delivery/:id', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id : new ObjectId(id)}
+        const updateUser = {
+            $set: {
+                role: 'delivery'
+            }
+        }
+        const result = await userCollection.updateOne(filter, updateUser)
         res.send(result)
     })
 
