@@ -79,6 +79,17 @@ async function run() {
         const result = await bookingCollection.find(query).toArray()
         res.send(result)
     })
+    app.patch('/booking/status/:id', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const updataStatus = {
+            $set: {
+                status: 'deliver'
+            }
+        }
+        const result = await bookingCollection.updateOne(filter, updataStatus)
+        res.send(result)
+    })
 
     app.post('/booking', async(req, res) => {
         const data = req.body
